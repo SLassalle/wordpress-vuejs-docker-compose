@@ -1,0 +1,23 @@
+{
+    "name": "WordPress + Vue Dev",
+    "build": {
+      "dockerfile": "Dockerfile",
+      "context": ".."
+    },
+    "features": {
+      "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    },
+    "mounts": [
+      "source=${localWorkspaceFolder}/backend,target=/workspace/backend,type=bind",
+      "source=${localWorkspaceFolder}/frontend,target=/workspace/frontend,type=bind"
+    ],
+    "postCreateCommand": "cd backend && cp .env.example .env && docker compose up -d",
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          "ms-azuretools.vscode-docker",
+          "esbenp.prettier-vscode"
+        ]
+      }
+    }
+  }

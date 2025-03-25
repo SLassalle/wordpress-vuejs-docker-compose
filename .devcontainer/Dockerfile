@@ -1,0 +1,13 @@
+FROM mcr.microsoft.com/devcontainers/base:ubuntu
+
+# Installer WP-CLI
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \
+    && chmod +x wp-cli.phar \
+    && mv wp-cli.phar /usr/local/bin/wp
+
+# Installer Node.js + npm pour Vite
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y nodejs
+
+# Installer Make (et outils de confort)
+RUN apt-get update && apt-get install -y make zip unzip less vim

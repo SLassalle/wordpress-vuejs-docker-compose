@@ -11,7 +11,8 @@
       "source=${localWorkspaceFolder}/backend,target=/workspace/backend,type=bind",
       "source=${localWorkspaceFolder}/frontend,target=/workspace/frontend,type=bind"
     ],
-    "postCreateCommand": "cd backend && cp .env.example .env && docker compose up -d",
+    "postCreateCommand": "cd backend && cp .env.example .env && docker compose -f ../backend/docker-compose.yml build && docker compose -f ../backend/docker-compose.yml up -d",
+    "postStartCommand": "cd backend && docker compose up -d",
     "customizations": {
       "vscode": {
         "extensions": [

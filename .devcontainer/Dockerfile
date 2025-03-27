@@ -6,7 +6,8 @@ RUN apt-get update && apt-get install -y \
     make \
     zip \
     unzip \
-    less
+    less \
+    php-cli php-mysql php-curl php-xml
 
 # Installer WP-CLI
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar \

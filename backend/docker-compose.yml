@@ -14,7 +14,9 @@ services:
       - wp-network
 
   wordpress:
-    image: wordpress:6.7-apache
+    build:
+      context: ./
+      dockerfile: wordpress.Dockerfile
     container_name: wordpress_app
     restart: always
     depends_on:
@@ -22,6 +24,7 @@ services:
     ports:
       - "8080:80"
     environment:
+      PHP_MEMORY_LIMIT: 512M
       WORDPRESS_DB_HOST: db
       WORDPRESS_DB_NAME: ${DATABASE}
       WORDPRESS_DB_USER: ${USER}
@@ -30,6 +33,7 @@ services:
       - ./wp-content/themes:/var/www/html/wp-content/themes
       - ./wp-content/plugins:/var/www/html/wp-content/plugins
       - uploads_data:/var/www/html/wp-content/uploads
+      - ./scripts:/var/www/html/scripts
     networks:
       - wp-network
 

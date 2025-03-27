@@ -1,40 +1,39 @@
-#!/bin/bash
+#!/bin/sh
+
 set -e
 
-# Sécurité : éviter de lancer ça en staging/prod
-if [[ "$ENV" == "prod" || "$ENV" == "staging" ]]; then
-  echo "❌ Ce script ne doit pas être exécuté en production/staging."
-  exit 1
+echo "⬇️ Téléchargement de WordPress si nécessaire..."
+if ! wp core is-installed; then
+  echo "⬇️ Téléchargement de WordPress..."
+  wp core download --quiet
 fi
 
-# Variables
-SITE_URL="http://localhost:8080"
-SITE_TITLE="Starter Dev Site"
-ADMIN_USER="admin"
-ADMIN_PASSWORD="admin"
-ADMIN_EMAIL="admin@example.com"
+echo "🔧 Configuration du fichier wp-config.php..."
+if [ ! -f wp-config.php ]; then
+  echo "🔧 Configuration du fichier wp-config.php..."
+  wp config create --dbname="$WORDPRESS_DB_NAME" --dbuser="$WORDPRESS_DB_USER" --dbpass="$WORDPRESS_DB_PASSWORD" --dbhost="$WORDPRESS_DB_HOST" --quiet --skip-check
+fi
+
 
 echo "🚀 Installation de WordPress..."
 wp core install \
-  --url="$SITE_URL" \
-  --title="$SITE_TITLE" \
-  --admin_user="$ADMIN_USER" \
-  --admin_password="$ADMIN_PASSWORD" \
-  --admin_email="$ADMIN_EMAIL"
+  --url="http://localhost:8080" \
+  --title="Headless WP" \
+  --admin_user="admin" \
+  --admin_password="admin" \
+  --admin_email="admin@example.com" \
+  --skip-email \
+  --quiet
 
-echo "🎨 Activation du thème..."
-wp theme activate theme-headless
+echo "🧹 Configuration minimale..."
+wp rewrite structure '/%postname%/' --hard --quiet
+wp rewrite flush --hard --quiet
 
-echo "🔌 Activation des plugins..."
-wp plugin activate starter-api
+echo "🎨 Activation du thème headless..."
+wp theme activate theme-headless --quiet
 
-echo "📝 Création de contenu fictif..."
-wp post create --post_title="Bienvenue" --post_status=publish
-wp post create --post_title="Notre mission" --post_status=publish
-wp post create --post_title="Contactez-nous" --post_status=publish
+if ! wp plugin is-active starter-api; then
+  wp plugin activate starter-api --quiet
+fi
 
-echo "💾 Export du dump de base..."
-wp db export dump/dev-anon.sql
-gzip -f dump/dev-anon.sql
-
-echo "✅ Site initialisé + dump généré."
+echo "✅ WordPress headless prêt à l’emploi."
